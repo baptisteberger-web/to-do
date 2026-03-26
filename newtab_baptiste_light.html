@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baptiste · Ekino</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F5F4F0;
+    --bg2: #ECEAE4;
+    --bg3: #E2E0D8;
+    --white: #FFFFFF;
+    --navy: #0A1628;
+    --navy2: #1E3A5F;
+    --yellow: #D4A000;
+    --yellow-bg: #FFF7DC;
+    --yellow-border: #FFE680;
+    --green: #0A8F6A;
+    --green-bg: #E0F5EE;
+    --blue: #1A5FA8;
+    --blue-bg: #E6F0FB;
+    --grey: #6B7A8D;
+    --grey-light: #9AABB8;
+    --text: #1A2332;
+    --border: rgba(0,0,0,0.07);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 0;
+  }
+
+  /* ---- GAUCHE ---- */
+  .left {
+    padding: 48px 48px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+    border-right: 1px solid var(--border);
+    min-height: 100vh;
+  }
+
+  /* Heure */
+  .clock { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 80px; line-height: 1; color: var(--navy); letter-spacing: -3px; }
+  .date { font-size: 14px; color: var(--grey); margin-top: 6px; text-transform: capitalize; font-weight: 400; }
+
+  /* Label */
+  .block-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  /* Sujets */
+  .sujet-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .sujet-row:last-child { border-bottom: none; }
+  .sujet-arrow { color: var(--yellow); font-size: 15px; font-weight: 700; }
+  .sujet-input {
+    background: none;
+    border: none;
+    outline: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--text);
+    width: 100%;
+    caret-color: var(--yellow);
+  }
+  .sujet-input::placeholder { color: #C0C8D0; font-style: italic; }
+
+  .separator { height: 1px; background: var(--border); }
+
+  /* Checklist */
+  .check-items { display: flex; flex-direction: column; gap: 6px; }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 11px 14px;
+    background: var(--white);
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .check-item:hover { border-color: rgba(0,0,0,0.14); background: #FAFAF8; }
+  .check-item.done { background: var(--bg2); border-color: transparent; }
+  .check-box {
+    width: 18px; height: 18px;
+    border-radius: 5px;
+    border: 1.5px solid #C8D0DA;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    background: var(--white);
+  }
+  .check-item.done .check-box { background: var(--green); border-color: var(--green); }
+  .check-item.done .check-box::after { content: '✓'; font-size: 11px; color: white; font-weight: 700; }
+  .check-text { font-size: 13.5px; color: var(--grey); line-height: 1.5; flex: 1; }
+  .check-text strong { color: var(--text); font-weight: 500; }
+  .check-item.done .check-text { text-decoration: line-through; color: #B0BAC4; }
+
+  .reset-btn {
+    font-size: 11px;
+    color: var(--grey-light);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 0 0;
+    font-family: 'DM Sans', sans-serif;
+    text-align: left;
+    transition: color 0.15s;
+  }
+  .reset-btn:hover { color: var(--grey); }
+
+  /* ---- DROITE ---- */
+  .right {
+    background: var(--white);
+    padding: 48px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    border-left: 1px solid var(--border);
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  /* Principes */
+  .principe-block { display: flex; flex-direction: column; gap: 0; }
+  .principe {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .principe:last-child { border-bottom: none; padding-bottom: 0; }
+  .principe-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+    color: rgba(212,160,0,0.18);
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+  .principe-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--navy);
+    margin-bottom: 3px;
+  }
+  .principe-desc { font-size: 12px; color: var(--grey); line-height: 1.5; }
+
+  /* Règles */
+  .regle-block { display: flex; flex-direction: column; }
+  .regle {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .regle:last-child { border-bottom: none; }
+  .regle-num {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--green);
+    min-width: 16px;
+    padding-top: 2px;
+  }
+  .regle-title { font-size: 13px; font-weight: 500; color: var(--navy); margin-bottom: 2px; }
+  .regle-desc { font-size: 11.5px; color: var(--grey); line-height: 1.4; }
+
+  /* Animations */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .left > * { animation: fadeIn 0.35s ease both; }
+  .left > *:nth-child(1) { animation-delay: 0s; }
+  .left > *:nth-child(2) { animation-delay: 0.06s; }
+  .left > *:nth-child(3) { animation-delay: 0.12s; }
+  .left > *:nth-child(4) { animation-delay: 0.18s; }
+  .right > * { animation: fadeIn 0.35s ease both; animation-delay: 0.1s; }
+</style>
+</head>
+<body>
+
+<!-- GAUCHE -->
+<div class="left">
+
+  <div>
+    <div class="clock" id="clock">00:00</div>
+    <div class="date" id="date"></div>
+  </div>
+
+  <div>
+    <div class="block-label" style="color:var(--yellow)">Mes 3 sujets du jour</div>
+    <div class="sujet-row">
+      <div class="sujet-arrow">→</div>
+      <input class="sujet-input" id="s1" placeholder="Sujet prioritaire 1..." oninput="saveSujets()">
+    </div>
+    <div class="sujet-row">
+      <div class="sujet-arrow">→</div>
+      <input class="sujet-input" id="s2" placeholder="Sujet prioritaire 2..." oninput="saveSujets()">
+    </div>
+    <div class="sujet-row">
+      <div class="sujet-arrow">→</div>
+      <input class="sujet-input" id="s3" placeholder="Sujet prioritaire 3..." oninput="saveSujets()">
+    </div>
+  </div>
+
+  <div class="separator"></div>
+
+  <div>
+    <div class="block-label" style="color:var(--blue)">Mise en orbite · 9h00</div>
+    <div class="check-items">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text"><strong>Pipedrive</strong> · relances dues aujourd'hui ou en retard</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text"><strong>3 sujets choisis</strong> · écrits ci-dessus</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text"><strong>Outlook</strong> · scan urgences uniquement</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text"><strong>Bloc profond bloqué</strong> · 9h15 dans Outlook</div>
+      </div>
+    </div>
+
+    <div class="separator" style="margin: 18px 0 14px"></div>
+
+    <div class="block-label" style="color:var(--green)">Verrouillage · 18h00</div>
+    <div class="check-items">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text"><strong>Pipedrive</strong> · chaque compte a une Activity datée</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text"><strong>Outlook</strong> · engagements flottants planifiés</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text"><strong>1 intention</strong> · la priorité de demain matin</div>
+      </div>
+    </div>
+
+    <button class="reset-btn" onclick="resetChecks()">↺ Réinitialiser</button>
+  </div>
+
+</div>
+
+<!-- DROITE -->
+<div class="right">
+
+  <div>
+    <div class="block-label" style="color:var(--yellow)">Les 3 principes</div>
+    <div class="principe-block">
+      <div class="principe">
+        <div class="principe-num">01</div>
+        <div class="principe-title">Externalise tout</div>
+        <div class="principe-desc">Ta tête sert à penser, pas à se souvenir. Si ce n'est pas écrit avec une date, ça n'existe pas.</div>
+      </div>
+      <div class="principe">
+        <div class="principe-num">02</div>
+        <div class="principe-title">3 sujets max par jour</div>
+        <div class="principe-desc">Dispersion sur 10 comptes = avancement sur zéro. Tu choisis 3, le reste attend.</div>
+      </div>
+      <div class="principe">
+        <div class="principe-num">03</div>
+        <div class="principe-title">Le système te relance</div>
+        <div class="principe-desc">Chaque interaction client finit avec une date dans Pipedrive. Tu ne penses plus à relancer.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="separator"></div>
+
+  <div>
+    <div class="block-label" style="color:var(--green)">Les 6 règles d'or</div>
+    <div class="regle-block">
+      <div class="regle">
+        <div class="regle-num">1</div>
+        <div>
+          <div class="regle-title">Toucher unique</div>
+          <div class="regle-desc">Un mail ouvert = une action faite. Jamais "pour y revenir".</div>
+        </div>
+      </div>
+      <div class="regle">
+        <div class="regle-num">2</div>
+        <div>
+          <div class="regle-title">2 minutes</div>
+          <div class="regle-desc">Moins de 2 min → je le fais. Sinon → une date.</div>
+        </div>
+      </div>
+      <div class="regle">
+        <div class="regle-num">3</div>
+        <div>
+          <div class="regle-title">3 blocs mails</div>
+          <div class="regle-desc">Outlook à 9h, 13h et 17h30 uniquement.</div>
+        </div>
+      </div>
+      <div class="regle">
+        <div class="regle-num">4</div>
+        <div>
+          <div class="regle-title">48h Pipedrive</div>
+          <div class="regle-desc">Toute interaction sans Activity dans les 48h = relance perdue.</div>
+        </div>
+      </div>
+      <div class="regle">
+        <div class="regle-num">5</div>
+        <div>
+          <div class="regle-title">Capture immédiate</div>
+          <div class="regle-desc">Chaque idée → Slack "captures". Tu ne l'évalues pas maintenant.</div>
+        </div>
+      </div>
+      <div class="regle">
+        <div class="regle-num">6</div>
+        <div>
+          <div class="regle-title">RDV = actions datées</div>
+          <div class="regle-desc">Chaque réunion se termine avec des actions dans Pipedrive.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    document.getElementById('clock').textContent = h + ':' + m;
+    const days = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+    const months = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+    document.getElementById('date').textContent = days[now.getDay()] + ' ' + now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  function toggleCheck(item) {
+    item.classList.toggle('done');
+    saveChecks();
+  }
+  function saveChecks() {
+    const state = Array.from(document.querySelectorAll('.check-item')).map(i => i.classList.contains('done'));
+    localStorage.setItem('checks', JSON.stringify(state));
+  }
+  function loadChecks() {
+    const saved = localStorage.getItem('checks');
+    if (!saved) return;
+    JSON.parse(saved).forEach((done, i) => {
+      const items = document.querySelectorAll('.check-item');
+      if (done && items[i]) items[i].classList.add('done');
+    });
+  }
+  function resetChecks() {
+    document.querySelectorAll('.check-item').forEach(i => i.classList.remove('done'));
+    localStorage.removeItem('checks');
+  }
+  function saveSujets() {
+    ['s1','s2','s3'].forEach(id => localStorage.setItem(id, document.getElementById(id).value));
+  }
+  function loadSujets() {
+    ['s1','s2','s3'].forEach(id => {
+      const val = localStorage.getItem(id);
+      if (val) document.getElementById(id).value = val;
+    });
+  }
+  function checkDailyReset() {
+    const today = new Date().toDateString();
+    if (localStorage.getItem('lastReset') !== today) {
+      resetChecks();
+      ['s1','s2','s3'].forEach(id => { localStorage.removeItem(id); document.getElementById(id).value = ''; });
+      localStorage.setItem('lastReset', today);
+    }
+  }
+  checkDailyReset();
+  loadChecks();
+  loadSujets();
+</script>
+</body>
+</html>
